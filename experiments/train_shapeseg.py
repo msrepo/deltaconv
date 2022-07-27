@@ -25,20 +25,20 @@ def train(args, writer):
     path = osp.join(osp.dirname(osp.realpath(__file__)), 'data/ShapeSeg')
 
     # Apply pre-transformations: normalize, get mesh normals, and sample points on the mesh.
-    pre_transform = Compose((
+    pre_transform = Compose([
         T.NormalizeArea(),
         T.NormalizeAxes(),
         GenerateMeshNormals(),
         T.SamplePoints(args.num_points * args.sampling_margin, include_normals=True, include_labels=True),
         T.GeodesicFPS(args.num_points)
-    ))
+    ])
 
     # Transformations during training: random scale, rotation, and translation.
-    transform = Compose((
+    transform = Compose([
         T.RandomScale((0.8, 1.2)),
         T.RandomRotate(360, axis=2),
         T.RandomTranslateGlobal(0.1)
-    ))
+    ])
 
     # Load datasets.
     train_dataset = ShapeSeg(path, True, transform=transform, pre_transform=pre_transform)
